@@ -3,21 +3,41 @@ var express = require('express');
 var app = express();
 
 app.get('/', function(request, response) {
-  response.send('Hello world!');
+  response.json({
+        name: 'Kim Gordon',
+        instrument: 'Bass'
+    });
 });
 
-app.get('/:firstname/:lastname', function(request, response) {
-  var first = request.params.firstname;
-  var last = request.params.lastname;
-  response.send(['Hello',first,last].join(' '));
+app.get('/headers', function(request, response) {
+  var json = {};
+  // shallow copy key/vaules from header object to json obj
+  for(var prop in request.headers) {
+    if(request.headers.hasOwnProperty(prop)) {
+      json[prop] = request.headers[prop];
+    }
+  }
+
+  response.json(json);
 });
 
-app.get('/jedi/:firstname/:lastname', function(request, response) {
-  var first = request.params.firstname;
-  var last = request.params.lastname;
-  var jediname = last.substr(0,3)+first.substr(0,2);
-  response.send(['Hello',jediname].join(' '));
+app.get('/headers/:header_name', function(request, response) {
+  var key = request.params.header_name,
+    value = 'Property "'+key+'" not found on header';
+
+  if(request.headers.hasOwnProperty(key)) {
+    value = request.headers[key];
+  }
+
+  response.send(value);
 });
+
+app.get('/version', function(request, response) {
+  response.send(request.httpVersion);
+});
+
+
+
 
 app.listen(8080);
 
