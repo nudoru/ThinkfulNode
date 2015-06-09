@@ -17,11 +17,23 @@ storage.add('Broad beans');
 storage.add('Tomatoes');
 storage.add('Peppers');
 
+var bodyParser = require('body-parser');
+var jsonParser = bodyParser.json();
+
 var app = express();
 app.use(express.static('public'));
 
 app.get('/items', function(req, res) {
     res.json(storage.items);
+});
+
+app.post('/items', jsonParser, function(req, res) {
+    if (!req.body) {
+        return res.sendStatus(400);
+    }
+
+    var item = storage.add(req.body.name);
+    res.status(201).json(item);
 });
 
 app.listen(process.env.PORT || 8080);
